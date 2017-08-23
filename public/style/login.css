@@ -1,0 +1,22 @@
+.col-centered{
+	float:none;
+	margin:0 auto;
+}
+
+.sign-in{
+	background-color:#226765;
+}
+
+.jumbo1{
+	background-color:#679B99;
+}
+
+body{
+        background-color:#D4B06A;
+}
+
+h1{
+	text-align:center;
+	color:#679B99;
+	font-family:"Courier New";
+}
