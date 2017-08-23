@@ -8,6 +8,9 @@ let cosineTerms = null;
 //var volumeControl = document.querySelector("input[name='volume']");
 var mediaRecorder = 0;
 var recordedChunks = [];
+var record = document.querySelector("#play");
+var stop = document.querySelector("#stop");
+var download = document.querySelector("#download");
 
 function setup(){
 	masterGainNode = audioContext.createGain();
@@ -52,13 +55,24 @@ function saveAudio(stream){
             recordedChunks.push(e.data);
         }
     })
-
+    
+    stop.style.background = "#333"; 
+    stop.style.border = "#333"; 
+    record.style.background = "green"; 
+    record.style.border = "green";
     mediaRecorder.start();
 }
 
 function stopAudio(){
    const downloadLink = document.getElementById('download');
-   mediaRecorder.stop(); 
+   if (mediaRecorder.state === "recording"){
+        stop.style.background = "red";
+        stop.style.border = "red";
+        record.style.background = "#333";
+        record.style.border = "#333";
+        mediaRecorder.stop(); 
+   }
+
    mediaRecorder.addEventListener('stop', function(){
         downloadLink.href = URL.createObjectURL(new Blob(recordedChunks));
         downloadLink.download = 'test.wav';
@@ -109,7 +123,7 @@ for (var i = 0; i < 13; ++i){
 
 function playTone(freq){
 	let osc = audioContext.createOscillator();
-	osc.connect(masterGainNode);
+	osc.connect(biquadFilter);
 	osc.frequency.value = freq;	
     osc.type = "sawtooth";
 	osc.start();
@@ -253,11 +267,16 @@ $(document).ready(function(){
     });
 
     $('#play').click(function(){
-        record = initAudio();
+        initAudio();
     });
 
     $("#stop").click(function(){
         stopAudio();
     });
+
+    $("#download").click(function(){
+        download.style.background = "blue";        
+        download.style.border = "blue";        
+    })
 
 })
