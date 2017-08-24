@@ -2,15 +2,12 @@ audioContext = new (window.AudioContext || window.webkitAudioContext);
 let masterGainNode = null;
 let biquadFilter = 0;
 var noteFreq = {};
-let customWaveform = null;
 let sineTerms = null;
 let cosineTerms = null;
-//var volumeControl = document.querySelector("input[name='volume']");
 var mediaRecorder = 0;
-var recordedChunks = [];
 var record = document.querySelector("#play");
-var stop = document.querySelector("#stop");
-var download = document.querySelector("#download");
+var stopRecord = document.querySelector("#stop");
+var soundClips = document.querySelector(".soundclips");
 
 function setup(){
 	masterGainNode = audioContext.createGain();
@@ -21,65 +18,124 @@ function setup(){
     biquadFilter.connect(masterGainNode);
     masterGainNode.connect(audioContext.destination);
   	masterGainNode.gain.value = 0.5;
-}
-
-function initAudio(){
-            navigator.getUserMedia = navigator.mediaDevices.getUserMedia({audio:true, video:false}).then(function(stream){
-            /*
-            var audioCtx = new AudioContext();
-            var source = audioCtx.createMediaStreamSource(stream);
-            var processor = context.createScriptProcessor(1024,1,1); 
-            
-            source.connect(processor);
-            processor.connect(context.destination);
-
-            //var biquadFilter = audioCtx.createBiquadFilter();
-            //biquadFilter.type = "lowshelf";
-            //biquadFilter.frequency.value = 1000;
-            //biquadFilter.gain.value = 10;
-
-            //source.connect(biquadFilter);
-            //biquadFilter.connect(audioCtx.destination);
-            source.connect(audioCtx.destination);
-            */
-
-            saveAudio(stream);
-        });
-}
-
-function saveAudio(stream){
-    const options = {mimeType: 'video/webm;codecs=vp9'};
-    mediaRecorder = new MediaRecorder(stream, options);
-    mediaRecorder.addEventListener('dataavailable', function(e){
-        if (e.data.size > 0){
-            recordedChunks.push(e.data);
-        }
-    })
-    
-    stop.style.background = "#333"; 
-    stop.style.border = "#333"; 
-    record.style.background = "green"; 
-    record.style.border = "green";
-    mediaRecorder.start();
-}
-
-function stopAudio(){
-   const downloadLink = document.getElementById('download');
-   if (mediaRecorder.state === "recording"){
-        stop.style.background = "red";
-        stop.style.border = "red";
-        record.style.background = "#333";
-        record.style.border = "#333";
-        mediaRecorder.stop(); 
-   }
-
-   mediaRecorder.addEventListener('stop', function(){
-        downloadLink.href = URL.createObjectURL(new Blob(recordedChunks));
-        downloadLink.download = 'test.wav';
-   })
+    stopRecord.disabled = true;
 }
 
 setup();
+
+if (navigator.mediaDevices.getUserMedia){
+    console.log('getUserMedia supported');
+	
+	var recordedChunks = [];
+    var constraints = {audio:true};
+
+    var onSuccess = function(stream){
+        console.log("in on success");
+        var mediaRecorder = new MediaRecorder(stream);
+
+        record.onclick = function(){
+            mediaRecorder.start();
+            console.log("recording started");
+            stopRecord.style.background = "#333"; 
+            stopRecord.style.border = "#333"; 
+            record.style.background = "green"; 
+            record.style.border = "green";
+            stopRecord.disabled = false;
+            record.disabled = true;
+        }
+
+        stopRecord.onclick = function(){
+            mediaRecorder.stop();
+            console.log("recording stopped");
+            stopRecord.style.background = "red";
+            stopRecord.style.border = "red";
+            record.style.background = "#333";
+            record.style.border = "#333";
+            stopRecord.disabled = true;
+            record.disabled = false;
+        }
+
+    mediaRecorder.onstop = function(e) {
+      console.log("data available after MediaRecorder.stop() called.");
+
+      var clipName = prompt('Enter a name for your sound clip?','My unnamed clip');
+      console.log(clipName);
+      var clipContainer = document.createElement('article');
+      var clipLabel = document.createElement('p');
+      var audio = document.createElement('audio');
+      var deleteButton = document.createElement('button');
+     
+      clipContainer.classList.add('clip');
+      audio.setAttribute('controls', '');
+      deleteButton.textContent = 'Delete';
+      deleteButton.className = 'delete';
+
+      if(clipName === null) {
+        clipLabel.textContent = 'My unnamed clip';
+      } else {
+        clipLabel.textContent = clipName;
+      }
+
+      clipContainer.appendChild(audio);
+      clipContainer.appendChild(clipLabel);
+      clipContainer.appendChild(deleteButton);
+      soundClips.appendChild(clipContainer);
+
+      audio.controls = true;
+      var blob = new Blob(recordedChunks, { 'type' : 'audio/ogg; codecs=opus' });
+      recordedChunks = [];
+      var audioURL = window.URL.createObjectURL(blob);
+      audio.src = audioURL;
+      console.log("recorder stopped");
+
+      deleteButton.onclick = function(e) {
+        evtTgt = e.target;
+        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+      }
+
+      clipLabel.onclick = function() {
+        var existingName = clipLabel.textContent;
+        var newClipName = prompt('Enter a new name for your sound clip?');
+        if(newClipName === null) {
+          clipLabel.textContent = existingName;
+        } else {
+          clipLabel.textContent = newClipName;
+        }
+      }
+    }
+
+    mediaRecorder.ondataavailable = function(e) {
+      recordedChunks.push(e.data);
+    }
+  }
+
+  var onError = function(err) {
+    console.log('The following error occured: ' + err);
+  }
+
+  navigator.mediaDevices.getUserMedia(constraints).then(onSuccess, onError);
+
+} else {
+   console.log('getUserMedia not supported on your browser!');
+}
+
+/*
+var audioCtx = new AudioContext();
+var source = audioCtx.createMediaStreamSource(stream);
+var processor = context.createScriptProcessor(1024,1,1); 
+
+source.connect(processor);
+processor.connect(context.destination);
+
+//var biquadFilter = audioCtx.createBiquadFilter();
+//biquadFilter.type = "lowshelf";
+//biquadFilter.frequency.value = 1000;
+//biquadFilter.gain.value = 10;
+
+//source.connect(biquadFilter);
+//biquadFilter.connect(audioCtx.destination);
+source.connect(audioCtx.destination);
+*/
 
 $('#ex1').slider({
         formatter: function(value) {
@@ -103,17 +159,6 @@ var noteFreq = {
 	B:987.766602512248223,
 	Coctave:1046.502261202394538
 };
-
-/*
-let env = new Envelope(context, {
-	attackTime: 0.1, 
-	decayTime: 3,
-	sustainLevel: 0.4,
-	releaseTime: 0.1
-});
-
-env.connect(gain.gain);
-*/
 
 var oscList = [];
 
@@ -139,8 +184,6 @@ function changeVolume(event){
 	masterGainNode.gain.value = volumeControl.value;
 }
 
-
-$(document).ready(function(){
     $(".library").click(function(event){
         $.get("library.html", function(data){
             $("body").html(data);
@@ -264,19 +307,5 @@ $(document).ready(function(){
                 break;
         }
 
-    });
-
-    $('#play').click(function(){
-        initAudio();
-    });
-
-    $("#stop").click(function(){
-        stopAudio();
-    });
-
-    $("#download").click(function(){
-        download.style.background = "blue";        
-        download.style.border = "blue";        
-    })
 
 })

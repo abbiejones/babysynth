@@ -73,7 +73,7 @@ ul li:first-child { border-radius:5px 0 5px 5px; }
 ul li:last-child { border-radius:0 5px 5px 5px; }
 
 .settingsBar{
-    margin-left: 220px;
+    margin-left: 240px;
 	padding-top: 20px;
 	font: 14px "Open Sans";
 	position: relative;
@@ -124,4 +124,39 @@ ul li:last-child { border-radius:0 5px 5px 5px; }
 
 #ex1Slider .slider-handle{
     background: #333;
+}
+
+.sound-clips {
+    flex: 1;
+    overflow: auto;
+}
+
+section, article {
+    display: block;
+}
+
+.clip {
+     padding-bottom: 1rem;
+}
+
+audio {
+    width: 100%;
+    display: block;
+    margin: 1rem auto 0.5rem;
+}
+
+.clip p {
+    display: inline-block;
+    font-size: 1rem;
+}
+
+.clip button {
+     font-size: 1rem;
+     float: right;
+ }
+
+button.delete {
+     background: #f00;
+     padding: 0.5rem 0.75rem;
+     font-size: 0.8rem;
 }

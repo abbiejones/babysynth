@@ -20,7 +20,6 @@
 			</div>
 		<ul class="nav navbar-nav">
 			<li class="record" class="active"><a href="index.html">record</a></li>
-			<li> <a class="library" href="library.html">library</a></li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right">
 			<li><a href="login.html">logout</a></li>
@@ -50,14 +49,6 @@
     <div class="container">
 		<div class="settingsBar">
             <div class="left">
-                <!--
-                <span class="volume">Volume:</span>
-                <input type="range" min-"0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="volume">
-                <datalist id="volumes">
-                    <option value="0.0" label="Mute">
-                    <option value="1.0" label="100%">
-                </datalist>
-                -->
                 <input id="ex1" class="volume" data-slider-id='ex1Slider' type="text" data-slider-min="0.0" data-slider-max="1.0" data-slider-step="0.1" data-slider-value="0.5"/>
 
             </div>
@@ -70,13 +61,13 @@
                         <button type="button" class= "btn btn-primary record" id="stop">
                             <span class="glyphicon glyphicon-stop"></span>
                         </button>
-                        <button type="button" class="btn btn-primary record" id="download">
-                            <span class="glyphicon glyphicon-download"></span>
-                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="container">
+        <section class = "soundclips"></section>
     </div>
 	<script src="js/pianoapp.js"></script>
 	</body>
