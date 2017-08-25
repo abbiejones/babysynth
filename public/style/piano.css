@@ -127,7 +127,14 @@ ul li:last-child { border-radius:0 5px 5px 5px; }
 }
 
 .sound-clips {
-    flex: 1;
+    margin-left: 250px;
+	padding-top: 20px;
+	font: 14px "Open Sans";
+	position: relative;
+	vertical-align: middle;
+	width:50%;
+
+    padding-top:50px;
     overflow: auto;
 }
 
@@ -156,7 +163,9 @@ audio {
  }
 
 button.delete {
+	 border-radius:3px 3px 3px 3px;
      background: #f00;
      padding: 0.5rem 0.75rem;
      font-size: 0.8rem;
 }
+

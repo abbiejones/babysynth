@@ -1,48 +1,28 @@
+
 var express = require('express');
 var path = require('path');
-/*
-var mysql = require('mysql');
-var connection = mysql.createConnection({
-    host : 'localhost',
-    user : 'abbie',
-    password : 'password'
-})
-*/
+var sqlite3 = require('sqlite3').verbose();
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var expressValidator = require('express-validator');
 
 const app = express();
-
-/*
-var passport = require('passport');
-var Strategy = require('passport-local').Strategy;
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use(new Strategy(function(username, password, done) {
-      if (username === 'test' && password === 'test'){
-	console.log(username);
-	console.log(password);
-      	return done(null, user);}
-      if (err) { return done(err); }
-      if (!username || !password) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-
-    }));
-*/
-
 app.use(express.static('public'));
-app.post('/login', function(req, res){
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator());
 
+let db = new sqlite3.Database('./db/users.db', sqlite3.OPEN_READONLY, (err) =>{
+    if (err){
+        return console.error("error opening database");
+    }
+
+    console.log("connected to users database");
 });
 
-/*
-connection.connect(function(err){
-    if (err){
-        console.error('error connecting' + err.stack);
-        return;
-    }
-})
-*/
+app.post('/login', function(req, res){
+    res.sendFile(__dirname + '/piano1.html');
+});
+
 app.listen(8080);
 

@@ -1,4 +1,5 @@
 audioContext = new (window.AudioContext || window.webkitAudioContext);
+
 let masterGainNode = null;
 let biquadFilter = 0;
 var noteFreq = {};
