@@ -1,4 +1,5 @@
-*{box-sizing:border-box;}
+*{box-sizing:border-box;
+}
 
 .container{
 	margin: 0 auto;
@@ -6,7 +7,7 @@
 
 .keyboard{
     position:relative;
-    margin-left: 170px; 
+    margin-left: 170px;
     margin-top: 75px;
 }
 

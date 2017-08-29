@@ -29,20 +29,31 @@ app.post('/login', function(req, res){
         
     });
 
-    console.log(req.body.username + req.body.password);
     db.each("SELECT * FROM login WHERE username = " + "'" + req.body.username + "'" + " AND password = " + "'" + req.body.password + "'", function(err, row){
-       console.log("selected username and password: " + row.username + " "  + row.password);
        if (row.username != null && row.password != null){
             res.sendFile(__dirname + '/piano1.html');
        }
+
+       if (err){
+            console.log('error occurred');
+            res.sendFile(__dirname + '/public/index.html');
+       }
         
-       db.on('error', function(error){
-            console.log("mayday");
-       })
     });
 
     db.close();
 });
+
+/*
+app.post('/piano', function(req,res){
+    console.log('received audio', req.body);
+    var writeStream = fs.createWriteStream('sample.wav');
+    fs.writeFile(writeStream);
+    req.pipe(writeStream);
+    res.status(200);
+
+})
+*/
 
 app.listen(8080);
 
